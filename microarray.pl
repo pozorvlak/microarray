@@ -138,25 +138,22 @@ sub average_and_stdev
 #which will take your @input_array and output it's $average and $stdev
 #It returns the mean and standard deviation of the values in the array
 {
-    my @array;                                                                                          #Declare array variable
-    my $arrayLength = $_[1];
-    my ($i,$j,$sum,$mean,$deviations,$stdev);                           #Declare variables
+    my ($array, $arrayLength) = @_;
+    my ($i,$j,$sum,$mean,$deviations,$stdev);  #Declare variables
     $sum=0;                                                                                                     #Set values of starting variables      
     $mean=();
     $deviations=0;
     $stdev=();
-    @array=();
-    @array=@{$_[0]};                                                                            #Take array from input
-    for ($i=0;$i<@array;$i++)                                                           #For each element in the array...
+    for ($i=0;$i<@$array;$i++)                                                           #For each element in the array...
     {
-        $sum=$sum+$array[$i];                                                                   #Take the sum of the entire input array
+        $sum=$sum+$array->[$i];                                                                   #Take the sum of the entire input array
     }
     $mean=$sum/$arrayLength;                                                                            #Find the mean of the input array values.
-    for ($j=0;$j<@array;$j++)                                                           #For each element in the array...
+    for ($j=0;$j<@$array;$j++)                                                           #For each element in the array...
     {
-        $deviations=$deviations+($array[$j]-$mean)**2;                  #Find the deviation from the mean and square it.
+        $deviations=$deviations+($array->[$j]-$mean)**2;                  #Find the deviation from the mean and square it.
     }
-    $stdev=sqrt($deviations/(@array-1));                                        #Take the square root of the S2 to find S.
+    $stdev=sqrt($deviations/(@$array-1));                                        #Take the square root of the S2 to find S.
     return $mean,$stdev;                                                                        #Return the mean and standard deviation.
 }              
 ##########################
