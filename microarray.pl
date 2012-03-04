@@ -112,7 +112,7 @@ for (my $i = 0; $i < $filterNumber; $i++) {
         $incrementor++;
         #print "Cycle: $reporter";
         print "\nFLD score: $fldScore";
-        if ($incrementor = 100) {
+        if ($incrementor == 100) {
                 print "\nCurrent cycle: $reporter";
                 $incrementor = 0;
         }
