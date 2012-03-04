@@ -80,8 +80,6 @@ for (my $i = 0; $i < @filterNames;$i++) {
 }
 print "\nThere are $filterNumber genes that meet filter criteria.\n";
  
-my @controlArray;
-my @sampleArray;
 my $controlMean;
 my $controlSD;
 my $sampleMean;
@@ -93,6 +91,8 @@ my $incrementor = 0;
  
  
 for (my $i = 0; $i < $filterNumber; $i++) {
+        my @controlArray;
+        my @sampleArray;
         for (my $j = 0; $j < 20; $j++) {
                 push (@controlArray,$filterData[$i][$j]);
         }
