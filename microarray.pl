@@ -46,14 +46,6 @@ close IN;
  
 my $geneNumber = $indexLine;
  
- 
- 
-#for (my $i = 0; $i < $geneNumber;$i++) {
-#       for (my $j = 0; $j < $sampleNum - 1; $j++) {
-#               print "\n$dataArray[$i][$j]";
-#       }
-#}
- 
 my @filterNames;
 my @filterData;
 my $counter = 0;
@@ -106,7 +98,6 @@ for (my $i = 0; $i < $filterNumber; $i++) {
         $scoreHash{$fldScore} = $i;
         $reporter++;
         $incrementor++;
-        #print "Cycle: $reporter";
         print "\nFLD score: $fldScore";
         if ($incrementor == 100) {
                 print "\nCurrent cycle: $reporter";
