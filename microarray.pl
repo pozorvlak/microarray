@@ -48,7 +48,6 @@ my $geneNumber = $indexLine;
  
 my @filterNames;
 my @filterData;
-my $counter = 0;
  
 for (my $i = 0; $i < $geneNumber; $i++) {
         my $flag = 0;
@@ -58,10 +57,9 @@ for (my $i = 0; $i < $geneNumber; $i++) {
                 }
         }
         if ($flag == 1) {
-                push (@filterNames,$nameArray[$counter]);
-                push (@filterData,$dataArray[$counter]);
+                push (@filterNames,$nameArray[$i]);
+                push (@filterData,$dataArray[$i]);
         }
-        $counter++
 }
  
 my $filterNumber = scalar @filterNames;
