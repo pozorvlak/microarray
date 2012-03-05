@@ -18,27 +18,21 @@ if (@ARGV != 1) {
         die ("\nUse: perl microarray.pl <Input datafile.txt>");
 }
  
-my $file = $ARGV[0];
- 
-open(my $in, "<", $file) or die "\nCouldn't open file $file: $!";
- 
 my $topLine;
 my @genes;
  
-while (my $line = <$in>) {
+while (my $line = <>) {
         chomp $line;
         if ($line =~ /^probes/) {
                 $topLine = $line;
         }
         else {
                 my ($name, @values) = split(" ", $line);
-                die "File '$file' contains non-numeric data at line $."
+                die "File '$ARGV' contains non-numeric data at line $."
                         if any { !looks_like_number($_) } @values;
                 push @genes, { name => $name, values => \@values };
         }
 }
- 
-close $in;
  
 # We only care about genes which have at least one sample greater than 300.
 my @filtered = grep { any { $_ > 300 } @{$_->{values}} } @genes;
