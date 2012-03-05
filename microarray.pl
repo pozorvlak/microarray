@@ -26,7 +26,6 @@ my $topLine;
 my @nameArray;
 my @dataArray =();
 my $indexLine = 0;
-my $sampleNum = 0;
  
 while (my $line = <$in>) {
         chomp $line;
@@ -37,7 +36,6 @@ while (my $line = <$in>) {
         else {
                 my ($name, @values) = split(" ", $line);
                 $nameArray[$indexLine] = $name;
-                $sampleNum = @values;
                 die "File '$file' contains non-numeric data at line $."
                         if any { !looks_like_number($_) } @values;
                 $dataArray[$indexLine] = \@values;
