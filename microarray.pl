@@ -18,7 +18,7 @@ if (@ARGV != 1) {
  
 my $file = $ARGV[0];
  
-open(IN,"$file") or die "\nCouldn't open file:\t$file";
+open(my $in, "<", $file) or die "\nCouldn't open file $file: $!";
  
 my $topLine;
 my @nameArray;
@@ -27,7 +27,7 @@ my $indexLine = 0;
 my $sampleNum = 0;
  
  
-while (my $line = <IN>) {
+while (my $line = <$in>) {
         if ($line =~ /^probes/) {
                 chomp $line;
                 $topLine = $line;
@@ -43,7 +43,7 @@ while (my $line = <IN>) {
         $indexLine++;
 }
  
-close IN;
+close $in;
  
 my $geneNumber = $indexLine;
  
