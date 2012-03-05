@@ -81,8 +81,6 @@ for (my $i = 0; $i < $filterNumber; $i++) {
         for (my $k = 20; $k < 41; $k++) {
                 push(@sampleArray, $filterData[$i][$k]);
         }
-        my $controlLength = @controlArray;
-        my $sampleLength = @sampleArray;
  
         ($controlMean,$controlSD) = average_and_stdev(\@controlArray);
         ($sampleMean,$sampleSD) = average_and_stdev(\@sampleArray);
