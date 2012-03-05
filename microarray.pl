@@ -72,12 +72,8 @@ for (my $i = 0; $i < $geneNumber; $i++) {
         $counter++
 }
  
-my $filterNumber = 0;
+my $filterNumber = scalar @filterNames;
  
-for (my $i = 0; $i < @filterNames;$i++) {
-        #print "\n$filterNames[$i]";
-        $filterNumber++;
-}
 print "\nThere are $filterNumber genes that meet filter criteria.\n";
  
 my $controlMean;
