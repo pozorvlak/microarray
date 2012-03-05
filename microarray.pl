@@ -84,8 +84,8 @@ for (my $i = 0; $i < $filterNumber; $i++) {
         my $controlLength = @controlArray;
         my $sampleLength = @sampleArray;
  
-        ($controlMean,$controlSD) = &average_and_stdev(\@controlArray);
-        ($sampleMean,$sampleSD) = &average_and_stdev(\@sampleArray);
+        ($controlMean,$controlSD) = average_and_stdev(\@controlArray);
+        ($sampleMean,$sampleSD) = average_and_stdev(\@sampleArray);
         my $fldNum = $controlMean - $sampleMean;
         my $fldDenom = $controlSD + $sampleSD;
         $fldScore = $fldNum / $fldDenom;
