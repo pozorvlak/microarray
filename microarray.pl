@@ -40,12 +40,8 @@ while (my $line = <$in>) {
  
 close $in;
  
-my @filtered;
-for my $gene (@genes) {
-        if (any { $_ > 300 } @{$gene->{values}}) {
-                push @filtered, $gene;
-        }
-}
+# We only care about genes which have at least one sample greater than 300.
+my @filtered = grep { any { $_ > 300 } @{$_->{values}} } @genes;
  
 print "\nThere are " . scalar(@filtered) .
     " genes that meet filter criteria.\n";
