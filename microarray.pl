@@ -63,8 +63,6 @@ my $filterNumber = scalar @filterNames;
 print "\nThere are $filterNumber genes that meet filter criteria.\n";
  
 my %scoreHash = ();
-my $reporter = 0;
-my $incrementor = 0;
  
 for my $i (0 .. $filterNumber - 1) {
         my $data = $filterData[$i];
@@ -76,12 +74,9 @@ for my $i (0 .. $filterNumber - 1) {
         my $fldDenom = $controlSD + $sampleSD;
         my $fldScore = $fldNum / $fldDenom;
         $scoreHash{$fldScore} = $i;
-        $reporter++;
-        $incrementor++;
         print "\nFLD score: $fldScore";
-        if ($incrementor == 100) {
-                print "\nCurrent cycle: $reporter";
-                $incrementor = 0;
+        if (($i + 1) % 100 == 0) {
+                print "\nCurrent cycle: " . ($i + 1);
         }
 }
  
