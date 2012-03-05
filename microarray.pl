@@ -35,8 +35,7 @@ my @filtered = grep { any { $_ > 300 } @{$_->{values}} } @genes;
 print "\nThere are " . scalar(@filtered) .
     " genes that meet filter criteria.\n";
  
-my %scoreHash = ();
-my $i = 0; 
+my %scoreHash;
 for my $gene (@filtered) {
         my $data = $gene->{values};
         my @controlArray = @$data[ 0 .. 19];    # first 20
@@ -48,9 +47,8 @@ for my $gene (@filtered) {
         my $fldScore = $fldNum / $fldDenom;
         $scoreHash{$fldScore} = $gene->{name};
         print "\nFLD score: $fldScore";
-        if (++$i % 100 == 0) {
-                print "\nCurrent cycle: " . $i;
-        }
+        print "\nCurrent cycle: ", scalar keys %scoreHash
+                if keys(%scoreHash) % 100 == 0;
 }
  
 print "\nTop Ranking Differentially Expressed Genes:";
