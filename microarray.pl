@@ -84,8 +84,8 @@ for (my $i = 0; $i < $filterNumber; $i++) {
         my $controlLength = @controlArray;
         my $sampleLength = @sampleArray;
  
-        ($controlMean,$controlSD) = &average_and_stdev(\@controlArray,$controlLength);
-        ($sampleMean,$sampleSD) = &average_and_stdev(\@sampleArray, $sampleLength);
+        ($controlMean,$controlSD) = &average_and_stdev(\@controlArray);
+        ($sampleMean,$sampleSD) = &average_and_stdev(\@sampleArray);
         my $fldNum = $controlMean - $sampleMean;
         my $fldDenom = $controlSD + $sampleSD;
         $fldScore = $fldNum / $fldDenom;
@@ -115,27 +115,26 @@ sub average_and_stdev
 ######################
 #This proceedure takes the address of an array as input.
 #to use this subroutine, input the following line
-#($average,$stdev) = &average_and_stdev(\@input_array)
-#which will take your @input_array and output it's $average and $stdev
+#($average,$stdev) = average_and_stdev(\@input_array)
+#which will take your @input_array and output its $average and $stdev
 #It returns the mean and standard deviation of the values in the array
 {
-    my ($array, $arrayLength) = @_;
-    my ($i,$j,$sum,$mean,$deviations,$stdev);  #Declare variables
-    $sum=0;                                                                                                     #Set values of starting variables      
-    $mean=();
-    $deviations=0;
-    $stdev=();
-    for ($i=0;$i<@$array;$i++)                                                           #For each element in the array...
-    {
-        $sum=$sum+$array->[$i];                                                                   #Take the sum of the entire input array
+    my ($array) = @_;
+    my $sum = 0;
+    my $deviations = 0;
+    for my $elt (@$array) {
+        $sum += $elt;
     }
-    $mean=$sum/$arrayLength;                                                                            #Find the mean of the input array values.
-    for ($j=0;$j<@$array;$j++)                                                           #For each element in the array...
+    my $mean = $sum/@$array;
+    for my $elt (@$array)
     {
-        $deviations=$deviations+($array->[$j]-$mean)**2;                  #Find the deviation from the mean and square it.
+        #Find the deviation from the mean and square it.
+        $deviations = $deviations + ($elt - $mean)**2;
     }
-    $stdev=sqrt($deviations/(@$array-1));                                        #Take the square root of the S2 to find S.
-    return $mean,$stdev;                                                                        #Return the mean and standard deviation.
+    #Take the square root of the S2 to find S.
+    my $stdev = sqrt($deviations/(@$array-1));
+    #Return the mean and standard deviation.
+    return $mean,$stdev;
 }              
 ##########################
 ##########################
