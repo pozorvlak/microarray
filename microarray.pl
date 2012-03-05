@@ -33,6 +33,9 @@ while (my $line = <$in>) {
                 $topLine = $line;
                 $indexLine = -1;
         }
+        elsif ($line =~ /probes/) {
+            die "File '$file' is malformed at line $.";
+        }
         else {
                 chomp $line;
                 my @tempArray = split(" ",$line);
