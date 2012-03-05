@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
  
 use strict;
+use List::MoreUtils qw/each_array/;
  
 ######################
 #Microarray Filter and Fold Change Finder
@@ -49,16 +50,17 @@ my $geneNumber = $indexLine;
 my @filterNames;
 my @filterData;
  
-for (my $i = 0; $i < $geneNumber; $i++) {
+my $ea = each_array(@nameArray, @dataArray);
+while (my ($name, $gene) = $ea->())  {
         my $flag = 0;
-        for (my $j = 0; $j < $sampleNum; $j++) {
-                if ($dataArray[$i][$j] > 300) {
+        for my $sample (@$gene) {
+                if ($sample > 300) {
                         $flag = 1;
                 }
         }
         if ($flag == 1) {
-                push (@filterNames,$nameArray[$i]);
-                push (@filterData,$dataArray[$i]);
+                push (@filterNames,$name);
+                push (@filterData,$gene);
         }
 }
  
