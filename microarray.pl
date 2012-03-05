@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
  
 use strict;
-use List::MoreUtils qw/any each_array/;
+use List::MoreUtils qw/any/;
 use List::Util qw/sum/;
 use Scalar::Util qw/looks_like_number/;
  
@@ -23,47 +23,37 @@ my $file = $ARGV[0];
 open(my $in, "<", $file) or die "\nCouldn't open file $file: $!";
  
 my $topLine;
-my @nameArray;
-my @dataArray =();
-my $indexLine = 0;
+my @genes;
  
 while (my $line = <$in>) {
         chomp $line;
         if ($line =~ /^probes/) {
                 $topLine = $line;
-                $indexLine = -1;
         }
         else {
                 my ($name, @values) = split(" ", $line);
-                $nameArray[$indexLine] = $name;
                 die "File '$file' contains non-numeric data at line $."
                         if any { !looks_like_number($_) } @values;
-                $dataArray[$indexLine] = \@values;
+                push @genes, { name => $name, values => \@values };
         }
-        $indexLine++;
 }
  
 close $in;
  
-my @filterNames;
-my @filterData;
- 
-my $ea = each_array(@nameArray, @dataArray);
-while (my ($name, $gene) = $ea->())  {
-        if (any { $_ > 300 } @$gene) {
-                push (@filterNames,$name);
-                push (@filterData,$gene);
+my @filtered;
+for my $gene (@genes) {
+        if (any { $_ > 300 } @{$gene->{values}}) {
+                push @filtered, $gene;
         }
 }
  
-my $filterNumber = scalar @filterNames;
- 
-print "\nThere are $filterNumber genes that meet filter criteria.\n";
+print "\nThere are " . scalar(@filtered) .
+    " genes that meet filter criteria.\n";
  
 my %scoreHash = ();
- 
-for my $i (0 .. $filterNumber - 1) {
-        my $data = $filterData[$i];
+my $i = 0; 
+for my $gene (@filtered) {
+        my $data = $gene->{values};
         my @controlArray = @$data[ 0 .. 19];    # first 20
         my @sampleArray  = @$data[20 .. 40];    # next 21
         my ($controlMean, $controlSD) = average_and_stdev(\@controlArray);
@@ -71,21 +61,19 @@ for my $i (0 .. $filterNumber - 1) {
         my $fldNum = $controlMean - $sampleMean;
         my $fldDenom = $controlSD + $sampleSD;
         my $fldScore = $fldNum / $fldDenom;
-        $scoreHash{$fldScore} = $i;
+        $scoreHash{$fldScore} = $gene->{name};
         print "\nFLD score: $fldScore";
-        if (($i + 1) % 100 == 0) {
-                print "\nCurrent cycle: " . ($i + 1);
+        if (++$i % 100 == 0) {
+                print "\nCurrent cycle: " . $i;
         }
 }
  
 my $scoreCounter = 1;
 foreach my $key (sort keys %scoreHash) {
         print "\nTop Ranking Differentially Expressed Genes:";
-        print "\n$scoreCounter. $filterNames[$scoreHash{$key}]";
+        print "\n$scoreCounter. $scoreHash{$key}";
         $scoreCounter++;
 }
-       
- 
                
 ######################
 sub average_and_stdev
