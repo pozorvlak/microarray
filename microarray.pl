@@ -53,9 +53,9 @@ for my $gene (@filtered) {
         }
 }
  
+print "\nTop Ranking Differentially Expressed Genes:";
 my $scoreCounter = 1;
 foreach my $key (sort keys %scoreHash) {
-        print "\nTop Ranking Differentially Expressed Genes:";
         print "\n$scoreCounter. $scoreHash{$key}";
         $scoreCounter++;
 }
