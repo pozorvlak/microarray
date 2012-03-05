@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
  
 use strict;
-use List::MoreUtils qw/all any each_array/;
+use List::MoreUtils qw/any each_array/;
 use List::Util qw/sum/;
 use Scalar::Util qw/looks_like_number/;
  
