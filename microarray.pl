@@ -2,6 +2,7 @@
  
 use strict;
 use List::MoreUtils qw/all any each_array/;
+use List::Util qw/sum/;
 use Scalar::Util qw/looks_like_number/;
  
 ######################
@@ -27,31 +28,24 @@ my @dataArray =();
 my $indexLine = 0;
 my $sampleNum = 0;
  
- 
 while (my $line = <$in>) {
+        chomp $line;
         if ($line =~ /^probes/) {
-                chomp $line;
                 $topLine = $line;
                 $indexLine = -1;
         }
-        elsif ($line =~ /probes/) {
-            die "File '$file' is malformed at line $.";
-        }
         else {
-                chomp $line;
-                my @tempArray = split(" ",$line);
-                $nameArray[$indexLine] = shift @tempArray;
-                $sampleNum = @tempArray;
+                my ($name, @values) = split(" ", $line);
+                $nameArray[$indexLine] = $name;
+                $sampleNum = @values;
                 die "File '$file' contains non-numeric data at line $."
-                        unless all { looks_like_number($_) } @tempArray;
-                @{$dataArray[$indexLine]} = @tempArray;
+                        if any { !looks_like_number($_) } @values;
+                $dataArray[$indexLine] = \@values;
         }
         $indexLine++;
 }
  
 close $in;
- 
-my $geneNumber = $indexLine;
  
 my @filterNames;
 my @filterData;
@@ -68,31 +62,19 @@ my $filterNumber = scalar @filterNames;
  
 print "\nThere are $filterNumber genes that meet filter criteria.\n";
  
-my $controlMean;
-my $controlSD;
-my $sampleMean;
-my $sampleSD;
-my $fldScore = 0;
 my %scoreHash = ();
 my $reporter = 0;
 my $incrementor = 0;
  
- 
-for (my $i = 0; $i < $filterNumber; $i++) {
-        my @controlArray;
-        my @sampleArray;
-        for (my $j = 0; $j < 20; $j++) {
-                push (@controlArray,$filterData[$i][$j]);
-        }
-        for (my $k = 20; $k < 41; $k++) {
-                push(@sampleArray, $filterData[$i][$k]);
-        }
- 
-        ($controlMean,$controlSD) = average_and_stdev(\@controlArray);
-        ($sampleMean,$sampleSD) = average_and_stdev(\@sampleArray);
+for my $i (0 .. $filterNumber - 1) {
+        my $data = $filterData[$i];
+        my @controlArray = @$data[ 0 .. 19];    # first 20
+        my @sampleArray  = @$data[20 .. 40];    # next 21
+        my ($controlMean, $controlSD) = average_and_stdev(\@controlArray);
+        my ($sampleMean, $sampleSD) = average_and_stdev(\@sampleArray);
         my $fldNum = $controlMean - $sampleMean;
         my $fldDenom = $controlSD + $sampleSD;
-        $fldScore = $fldNum / $fldDenom;
+        my $fldScore = $fldNum / $fldDenom;
         $scoreHash{$fldScore} = $i;
         $reporter++;
         $incrementor++;
@@ -104,8 +86,6 @@ for (my $i = 0; $i < $filterNumber; $i++) {
 }
  
 my $scoreCounter = 1;
- 
- 
 foreach my $key (sort keys %scoreHash) {
         print "\nTop Ranking Differentially Expressed Genes:";
         print "\n$scoreCounter. $filterNames[$scoreHash{$key}]";
@@ -124,21 +104,14 @@ sub average_and_stdev
 #It returns the mean and standard deviation of the values in the array
 {
     my ($array) = @_;
-    my $sum = 0;
-    my $deviations = 0;
-    for my $elt (@$array) {
-        $sum += $elt;
-    }
-    my $mean = $sum/@$array;
-    for my $elt (@$array)
-    {
-        #Find the deviation from the mean and square it.
-        $deviations = $deviations + ($elt - $mean)**2;
-    }
+    my $sum = sum(@$array);
+    my $n = @$array;
+    my $mean = $sum / $n;
+    my $deviations = sum(map { ($_ - $mean)**2 } @$array);
     #Take the square root of the S2 to find S.
-    my $stdev = sqrt($deviations/(@$array-1));
+    my $stdev = sqrt($deviations / ($n - 1));
     #Return the mean and standard deviation.
-    return $mean,$stdev;
+    return $mean, $stdev;
 }              
 ##########################
 ##########################
