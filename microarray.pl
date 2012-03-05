@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
  
 use strict;
-use List::MoreUtils qw/any each_array/;
+use List::MoreUtils qw/all any each_array/;
+use Scalar::Util qw/looks_like_number/;
  
 ######################
 #Microarray Filter and Fold Change Finder
@@ -41,6 +42,8 @@ while (my $line = <$in>) {
                 my @tempArray = split(" ",$line);
                 $nameArray[$indexLine] = shift @tempArray;
                 $sampleNum = @tempArray;
+                die "File '$file' contains non-numeric data at line $."
+                        unless all { looks_like_number($_) } @tempArray;
                 @{$dataArray[$indexLine]} = @tempArray;
         }
         $indexLine++;
