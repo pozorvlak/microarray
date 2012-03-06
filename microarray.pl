@@ -6,6 +6,7 @@ use List::Util qw/sum/;
 use Scalar::Util qw/looks_like_number/;
 use Statistics::Lite qw/mean stddev/;
 use feature 'say';
+our $VERSION = '0.001';
  
 ######################
 #Microarray Filter and Fold Change Finder
