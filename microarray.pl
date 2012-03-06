@@ -20,10 +20,10 @@ if (@ARGV != 1) {
  
 my @genes;
  
-while (my $line = <>) {
-        chomp $line;
-        next if $line =~ /^probes/; # Header line: ignore
-        my ($name, @values) = split(" ", $line);
+while (<>) {
+        chomp;
+        next if /^probes/; # Header line: ignore
+        my ($name, @values) = split;
         die "File '$ARGV' contains non-numeric data at line $."
                 if any { !looks_like_number($_) } @values;
         push @genes, { name => $name, values => \@values };
