@@ -5,6 +5,7 @@ use List::MoreUtils qw/any/;
 use List::Util qw/sum/;
 use Scalar::Util qw/looks_like_number/;
 use Statistics::Lite qw/mean stddev/;
+use feature 'say';
  
 ######################
 #Microarray Filter and Fold Change Finder
@@ -12,7 +13,7 @@ use Statistics::Lite qw/mean stddev/;
  
 #Open data file and read into array:
  
-print "\nMicroarray Filter and Analysis Tool:\n";
+say "\nMicroarray Filter and Analysis Tool:";
  
  
 if (@ARGV != 1) {
@@ -33,8 +34,7 @@ while (<>) {
 # We only care about genes which have at least one sample greater than 300.
 my @filtered = grep { any { $_ > 300 } @{$_->{values}} } @genes;
  
-print "\nThere are " . scalar(@filtered) .
-    " genes that meet filter criteria.\n";
+say "\nThere are " . scalar(@filtered) . " genes that meet filter criteria.\n";
  
 my %scoreHash;
 for my $gene (@filtered) {
@@ -45,15 +45,15 @@ for my $gene (@filtered) {
         my $fldDenom = stddev(@controlArray) + stddev(@sampleArray);
         my $fldScore = $fldNum / $fldDenom;
         $scoreHash{$fldScore} = $gene->{name};
-        print "\nFLD score: $fldScore";
-        print "\nCurrent cycle: ", scalar keys %scoreHash
+        say "FLD score: $fldScore";
+        say "Current cycle: ", scalar keys %scoreHash
                 if keys(%scoreHash) % 100 == 0;
 }
  
-print "\nTop Ranking Differentially Expressed Genes:\n";
+say "Top Ranking Differentially Expressed Genes:";
 my $scoreCounter = 1;
 foreach my $key (sort keys %scoreHash) {
-        print "$scoreCounter. $scoreHash{$key}\n";
+        say "$scoreCounter. $scoreHash{$key}";
         $scoreCounter++;
 }
 
