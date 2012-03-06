@@ -4,6 +4,7 @@ use strict;
 use List::MoreUtils qw/any/;
 use List::Util qw/sum/;
 use Scalar::Util qw/looks_like_number/;
+use Statistics::Lite qw/mean stddev/;
  
 ######################
 #Microarray Filter and Fold Change Finder
@@ -40,10 +41,8 @@ for my $gene (@filtered) {
         my $data = $gene->{values};
         my @controlArray = @$data[ 0 .. 19];    # first 20
         my @sampleArray  = @$data[20 .. 40];    # next 21
-        my ($controlMean, $controlSD) = average_and_stdev(\@controlArray);
-        my ($sampleMean, $sampleSD) = average_and_stdev(\@sampleArray);
-        my $fldNum = $controlMean - $sampleMean;
-        my $fldDenom = $controlSD + $sampleSD;
+        my $fldNum = mean(@controlArray) - mean(@sampleArray);
+        my $fldDenom = stddev(@controlArray) + stddev(@sampleArray);
         my $fldScore = $fldNum / $fldDenom;
         $scoreHash{$fldScore} = $gene->{name};
         print "\nFLD score: $fldScore";
@@ -57,26 +56,4 @@ foreach my $key (sort keys %scoreHash) {
         print "$scoreCounter. $scoreHash{$key}\n";
         $scoreCounter++;
 }
-               
-######################
-sub average_and_stdev
-######################
-#This proceedure takes the address of an array as input.
-#to use this subroutine, input the following line
-#($average,$stdev) = average_and_stdev(\@input_array)
-#which will take your @input_array and output its $average and $stdev
-#It returns the mean and standard deviation of the values in the array
-{
-    my ($array) = @_;
-    my $sum = sum(@$array);
-    my $n = @$array;
-    my $mean = $sum / $n;
-    my $deviations = sum(map { ($_ - $mean)**2 } @$array);
-    #Take the square root of the S2 to find S.
-    my $stdev = sqrt($deviations / ($n - 1));
-    #Return the mean and standard deviation.
-    return $mean, $stdev;
-}              
-##########################
-##########################
 
