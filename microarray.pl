@@ -21,34 +21,21 @@ if (@ARGV != 1) {
         die ("\nUse: perl microarray.pl <Input datafile.txt>");
 }
  
-my @genes;
- 
+my %score;
 while (<>) {
         chomp;
         next if /^probes/; # Header line: ignore
         my ($name, @values) = split;
         die "File '$ARGV' contains non-numeric data at line $."
                 if any { !looks_like_number($_) } @values;
-        push @genes, { name => $name, values => \@values };
-}
- 
-# We only care about genes which have at least one sample greater than 300.
-my @filtered = grep { any { $_ > 300 } @{$_->{values}} } @genes;
- 
-say "\nThere are " . scalar(@filtered) . " genes that meet filter criteria.\n";
- 
-my %score;
-for my $gene (@filtered) {
-        my $data = $gene->{values};
-        my @control = @$data[ 0 .. 19];    # first 20
-        my @sample  = @$data[20 .. 40];    # next 21
-        my $fldNum = mean(@control) - mean(@sample);
-        my $fldDenom = stddev(@control) + stddev(@sample);
-        my $fldScore = $fldNum / $fldDenom;
-        $score{$fldScore} = $gene->{name};
-        say "FLD score: $fldScore";
-        say "Current cycle: ", scalar keys %score
-                if keys(%score) % 100 == 0;
+        # We look at genes which have at least one sample greater than 300.
+        if (any { $_ > 300 } @values) {
+                my $fldScore = fld(@values);
+                say "FLD score: $fldScore";
+                $score{$fldScore} = $name;
+                say "Current cycle: ", scalar keys %score
+                        if keys(%score) % 100 == 0;
+        }
 }
  
 say "Top Ranking Differentially Expressed Genes:";
@@ -56,5 +43,13 @@ my $scoreCounter = 1;
 foreach my $key (sort keys %score) {
         say "$scoreCounter. $score{$key}";
         $scoreCounter++;
+}
+
+sub fld {
+        my @control = @_[ 0 .. 19];    # first 20
+        my @sample  = @_[20 .. 40];    # next 21
+        my $fldNum = mean(@control) - mean(@sample);
+        my $fldDenom = stddev(@control) + stddev(@sample);
+        return $fldNum / $fldDenom;
 }
 
