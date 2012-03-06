@@ -12,15 +12,14 @@ if you're on OS X). To make a checkout, use the following command:
 The program now depends on some library modules from CPAN (Perl's killer
 feature). To install these, and their dependencies, do the following:
 
-1. Install cpanminus
+1. Install cpanminus, using one or other of these commands:
 
-    curl -L http://cpanmin.us | perl - --self-upgrade
-    # or, if you don't have curl installed
-    wget -O - http://cpanmin.us | perl - --self-upgrade
+        curl -L http://cpanmin.us | perl - --self-upgrade
+        wget -O - http://cpanmin.us | perl - --self-upgrade
 
 2. Use cpanminus to fetch the dependencies specified in Makefile.PL
 
-    ~/perl5/bin/cpanm .
+        ~/perl5/bin/cpanm .
 
 That's it! You'll note that cpanminus also runs the tests for all the modules
 it fetches, and the tests (OK, test) for this distribution (in t/).
@@ -28,8 +27,8 @@ it fetches, and the tests (OK, test) for this distribution (in t/).
 You may also be interested in the following articles, in which Mark Jason
 Dominus applies similar cleanups to some beginners' Perl scripts.
 
-http://www.perl.com/pub/2000/04/raceinfo.html
-http://www.perl.com/pub/2000/06/commify.html
-http://perl.plover.com/yak/flags/
+http://www.perl.com/pub/2000/04/raceinfo.html   
+http://www.perl.com/pub/2000/06/commify.html   
+http://perl.plover.com/yak/flags/   
 
 Have fun!
