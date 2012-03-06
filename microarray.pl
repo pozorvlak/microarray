@@ -37,24 +37,24 @@ my @filtered = grep { any { $_ > 300 } @{$_->{values}} } @genes;
  
 say "\nThere are " . scalar(@filtered) . " genes that meet filter criteria.\n";
  
-my %scoreHash;
+my %score;
 for my $gene (@filtered) {
         my $data = $gene->{values};
-        my @controlArray = @$data[ 0 .. 19];    # first 20
-        my @sampleArray  = @$data[20 .. 40];    # next 21
-        my $fldNum = mean(@controlArray) - mean(@sampleArray);
-        my $fldDenom = stddev(@controlArray) + stddev(@sampleArray);
+        my @control = @$data[ 0 .. 19];    # first 20
+        my @sample  = @$data[20 .. 40];    # next 21
+        my $fldNum = mean(@control) - mean(@sample);
+        my $fldDenom = stddev(@control) + stddev(@sample);
         my $fldScore = $fldNum / $fldDenom;
-        $scoreHash{$fldScore} = $gene->{name};
+        $score{$fldScore} = $gene->{name};
         say "FLD score: $fldScore";
-        say "Current cycle: ", scalar keys %scoreHash
-                if keys(%scoreHash) % 100 == 0;
+        say "Current cycle: ", scalar keys %score
+                if keys(%score) % 100 == 0;
 }
  
 say "Top Ranking Differentially Expressed Genes:";
 my $scoreCounter = 1;
-foreach my $key (sort keys %scoreHash) {
-        say "$scoreCounter. $scoreHash{$key}";
+foreach my $key (sort keys %score) {
+        say "$scoreCounter. $score{$key}";
         $scoreCounter++;
 }
 
