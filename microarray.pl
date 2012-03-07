@@ -26,19 +26,24 @@ my @genes;
 while (<>) {
         chomp;
         next if /^probes/; # Header line: ignore
+
         my ($name, @values) = split;
+
+        # Die on unexpected non-numeric data
         die "File '$ARGV' contains non-numeric data at line $."
                 if any { !looks_like_number($_) } @values;
+
+        # We only care about genes which have at least one sample greater than 300.
+        next unless any { $_ > 300 } @values;
+
         push @genes, { name => $name, values => \@values };
 }
  
-# We only care about genes which have at least one sample greater than 300.
-my @filtered = grep { any { $_ > 300 } @{$_->{values}} } @genes;
+say "\nThere are " . scalar(@genes) . " genes that meet filter criteria.\n";
  
-say "\nThere are " . scalar(@filtered) . " genes that meet filter criteria.\n";
- 
+
 my %score;
-for my $gene (@filtered) {
+for my $gene (@genes) {
         my $data = $gene->{values};
         my @control = @$data[ 0 .. 19];    # first 20
         my @sample  = @$data[20 .. 40];    # next 21
