@@ -16,10 +16,7 @@ our $VERSION = '0.001';
  
 say "\nMicroarray Filter and Analysis Tool:";
  
- 
-if (@ARGV != 1) {
-        die ("\nUse: perl microarray.pl <Input datafile.txt>");
-}
+die ("\nUse: perl microarray.pl <Input datafile.txt>") unless @ARGV == 1;
  
 my @genes;
  
